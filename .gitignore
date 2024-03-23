@@ -1,0 +1,6 @@
+build
+glad.c
+.idea
+.vscode
+compile.sh
+run.sh
