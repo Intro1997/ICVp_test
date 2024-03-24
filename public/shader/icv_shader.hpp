@@ -1,9 +1,28 @@
 #pragma once
-// clang-format off
+#include "icv_camera.hpp"
+#include "icv_file.hpp"
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
-// clang-format on
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <vector>
 
-GLuint CreateProgram(const char *vertex_shader_file,
-                     const char *fragment_shader_file, const int scr_width,
-                     const int scr_height);
+class Shader {
+public:
+  Shader(GLenum type, const std::string &path);
+
+  const File &file() const;
+  const GLenum type() const;
+  const GLuint gl_obj() const;
+  bool IsCompiled() const;
+
+  bool Compile();
+
+
+private:
+  GLenum type_;
+  File file_;
+  GLuint gl_obj_;
+  bool is_compiled_;
+};
+
+Shader CreateShader(GLenum type, const std::string& path);

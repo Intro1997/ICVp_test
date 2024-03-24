@@ -1,23 +1,23 @@
-#ifndef __TOOLS_FILE_HPP__
-#define __TOOLS_FILE_HPP__
+#pragma once
 
 #include <fstream>
+#include <string>
 
 class File {
 public:
-  File(const char *path, const char *filename);
-  const char *path() const;
+  File(const std::string &path);
+  File(const File &file);
+  ~File();
 
-  std::string GetContent() const;
-  std::string filename() const;
-  bool LoadContent();
-  void Clear();
+  bool LoadFile(const std::string &path);
+  bool TryOpen();
+  std::string GetFileContent();
+  void set_current_path(const std::string &path);
+  std::string current_path() const;
 
 private:
-  std::string path_;
-  std::string filename_;
-  std::fstream file_stream_;
-  std::string content_;
+  std::ifstream file_reader_;
+  std::string current_path_;
+  bool need_read_;
+  std::string file_content_;
 };
-
-#endif //__TOOLS_FILE_HPP__
