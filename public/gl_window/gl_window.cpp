@@ -7,12 +7,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
-static double last_w_cursor_pos_x = 0;
-static double last_w_cursor_pos_y = 0;
-static bool first_get_cursor = true;
-static glm::vec3 RotateVec3(const glm::vec3 &vec, float degree,
-                            const glm::vec3 &axis);
-#define MAX_WATCH_DEGREE 80.0
+static glm::vec3 GetVec3ByYawPitch(double yaw, double pitch);
 
 GLFWwindow *GetGlWindow(const int width, const int height, const char *titile) {
   glfwInit();
@@ -75,20 +70,15 @@ void ProcessBasicMove(GLFWwindow *window, Camera &camera, float speed) {
   camera.Update();
 }
 
-void ProcessBasicWatch(GLFWwindow *window, Camera &camera, float speed) {
-  /*
-  (0, 0)___________
-        |         |
-        |  window |
-        |         |
-        ----------- (x, y)
-  */
-  int w_width, w_height;
-  glfwGetWindowSize(window, &w_width, &w_height);
-  if (w_width == 0 || w_height == 0) {
-    return;
-  }
+static double last_w_cursor_pos_x = 0;
+static double last_w_cursor_pos_y = 0;
+static double yaw = 0;
+static double pitch = 0;
+static bool first_get_cursor = true;
+#define MAX_WATCH_DEGREE 80.0
+#define MIN_WATCH_DEGREE -80.0
 
+void ProcessBasicWatch(GLFWwindow *window, Camera &camera, float speed) {
   if (first_get_cursor) {
     glfwGetCursorPos(window, &last_w_cursor_pos_x, &last_w_cursor_pos_y);
     first_get_cursor = false;
@@ -103,36 +93,32 @@ void ProcessBasicWatch(GLFWwindow *window, Camera &camera, float speed) {
   double w_cursor_offset_y =
       (w_cursor_pos_y - last_w_cursor_pos_y) * glm::abs(speed);
 
-  float w_fov = camera.horizontal_fov();
-  glm::vec3 lookat = camera.lookat();
-  glm::vec3 pos = camera.position();
-  glm::vec3 up = glm::normalize(camera.up());
-  glm::vec3 pos_to_lookat = lookat - pos;
+  yaw += w_cursor_offset_x;
+  pitch -= w_cursor_offset_y;
 
-  if (w_cursor_offset_x) {
-    glm::vec3 rotate_axis = glm::vec3(0.0, 1.0, 0.0);
-    float rotate_degree = (-w_cursor_offset_x / (double)w_width) * w_fov;
-    pos_to_lookat = RotateVec3(pos_to_lookat, rotate_degree, rotate_axis);
-    camera.set_lookat(pos + pos_to_lookat);
+  if (pitch > MAX_WATCH_DEGREE) {
+    pitch = MAX_WATCH_DEGREE;
+  } else if (pitch < MIN_WATCH_DEGREE) {
+    pitch = MIN_WATCH_DEGREE;
   }
-  if (w_cursor_offset_y) {
-    glm::vec3 rotate_axis = glm::normalize(glm::cross(pos_to_lookat, up));
-    float rotate_degree = (-w_cursor_offset_y / (double)w_height) * w_fov;
-    pos_to_lookat = RotateVec3(pos_to_lookat, rotate_degree, rotate_axis);
-    if (glm::abs(glm::dot(glm::normalize(pos_to_lookat), up)) <=
-        glm::cos(glm::radians(90.0 - MAX_WATCH_DEGREE))) {
-      camera.set_lookat(pos + pos_to_lookat);
-    }
-  }
+
+  glm::vec3 pos = camera.position();
+  glm::vec3 pos_to_lookat = GetVec3ByYawPitch(yaw, pitch);
+  camera.set_lookat(pos + pos_to_lookat);
 
   last_w_cursor_pos_x = w_cursor_pos_x;
   last_w_cursor_pos_y = w_cursor_pos_y;
   camera.Update();
 }
 
-static glm::vec3 RotateVec3(const glm::vec3 &vec, float degree,
-                            const glm::vec3 &axis) {
-  glm::mat4 rotate_mat =
-      glm::rotate(glm::mat4(1.0f), glm::radians(degree), axis);
-  return glm::vec3(rotate_mat * glm::vec4(vec, 1.0));
+static glm::vec3 GetVec3ByYawPitch(double yaw_degree, double pitch_degree) {
+  double pitch_radians = glm::radians(pitch_degree);
+  double yaw_radians = glm::radians(yaw_degree - 90);
+  // double x = glm::cos(pitch_radians) * glm::sin(glm::radians(yaw_degree));
+  double x = glm::cos(pitch_radians) * glm::cos(yaw_radians);
+  double y = glm::sin(pitch_radians);
+  // double z = glm::cos(pitch_radians) * glm::cos(glm::radians(yaw_degree +
+  // 180));
+  double z = glm::cos(pitch_radians) * glm::sin(yaw_radians);
+  return glm::normalize(glm::vec3(x, y, z));
 }

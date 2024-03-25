@@ -73,7 +73,7 @@ void RunFocusTest(GLFWwindow *window) {
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(16ms);
     ProcessBasicMove(window, curr_camera, 0.1f);
-    ProcessBasicWatch(window, curr_camera, 0.3f);
+    ProcessBasicWatch(window, curr_camera, 0.1f);
 
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT |
