@@ -29,6 +29,7 @@
   "fragment_pure_color.fs"
 
 static std::vector<float> GetQuadVertices();
+static void ProcessKeyInput(GLFWwindow *window);
 
 void RunFocusTest(GLFWwindow *window) {
   INIT_GL_FUNC_WITH_RET(window, void());
@@ -68,10 +69,10 @@ void RunFocusTest(GLFWwindow *window) {
 
   CHECK_GL_ERROR_WITH_RET(void(0));
 
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   while (!glfwWindowShouldClose(window)) {
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(16ms);
+    ProcessKeyInput(window);
     ProcessBasicMove(window, curr_camera, 0.1f);
     ProcessBasicWatch(window, curr_camera, 0.1f);
 
@@ -83,6 +84,20 @@ void RunFocusTest(GLFWwindow *window) {
 
     glfwPollEvents();
     glfwSwapBuffers(window);
+  }
+}
+
+static bool first_press_cmd = true;
+static void ProcessKeyInput(GLFWwindow *window) {
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, GLFW_TRUE);
+  }
+
+  int cmd_key_state = glfwGetKey(window, GLFW_KEY_LEFT_SUPER);
+  if (cmd_key_state == GLFW_PRESS) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  } else if (cmd_key_state == GLFW_RELEASE) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   }
 }
 
