@@ -88,10 +88,10 @@ static void ProcessKeyInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
 
-  int cmd_key_state = glfwGetKey(window, GLFW_KEY_LEFT_SUPER);
-  if (cmd_key_state == GLFW_PRESS) {
+  int ctrl_key_state = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL);
+  if (ctrl_key_state == GLFW_PRESS) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  } else if (cmd_key_state == GLFW_RELEASE) {
+  } else if (ctrl_key_state == GLFW_RELEASE) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   }
 }
