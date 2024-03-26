@@ -9,7 +9,7 @@
 
 static glm::vec3 GetVec3ByYawPitch(double yaw, double pitch);
 
-GLFWwindow *GetGlWindow(const int width, const int height, const char *titile) {
+GLFWwindow *GetGlWindow(const int width, const int height, const char *title) {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -22,7 +22,7 @@ GLFWwindow *GetGlWindow(const int width, const int height, const char *titile) {
       GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
 
-  GLFWwindow *window = glfwCreateWindow(width, height, titile, NULL, NULL);
+  GLFWwindow *window = glfwCreateWindow(width, height, title, NULL, NULL);
   return window;
 }
 
@@ -74,14 +74,19 @@ static double last_w_cursor_pos_x = 0;
 static double last_w_cursor_pos_y = 0;
 static double yaw = 0;
 static double pitch = 0;
-static bool first_get_cursor = true;
+static bool reset_last_pos = true;
 #define MAX_WATCH_DEGREE 80.0
-#define MIN_WATCH_DEGREE -80.0
+#define MIN_WATCH_DEGREE (-80.0)
 
 void ProcessBasicWatch(GLFWwindow *window, Camera &camera, float speed) {
-  if (first_get_cursor) {
+  if (glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED) {
+    reset_last_pos = true;
+    return;
+  }
+
+  if (reset_last_pos) {
     glfwGetCursorPos(window, &last_w_cursor_pos_x, &last_w_cursor_pos_y);
-    first_get_cursor = false;
+    reset_last_pos = false;
     return;
   }
 
