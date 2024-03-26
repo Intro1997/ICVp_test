@@ -16,17 +16,12 @@
 #include "icv_texture.hpp"
 #include "icv_vertex.hpp"
 
-#define MARBLE_JPG_PATH                                                        \
-  "/Users/intro/Spaces/TestSpace/ICVp_test/asset/marble.jpg"
-#define METAL_PNG_PATH "/Users/intro/Spaces/TestSpace/ICVp_test/asset/metal.png"
+#define MARBLE_JPG_PATH "./asset/marble.jpg"
+#define METAL_PNG_PATH "./asset/metal.png"
 
-#define VS_SHADER_PATH                                                         \
-  "/Users/intro/Spaces/TestSpace/ICVp_test/test/focus/shader/vertex.vs"
-#define FS_SHADER_PATH                                                         \
-  "/Users/intro/Spaces/TestSpace/ICVp_test/test/focus/shader/fragment.fs"
-#define FS_PURE_COLOR_SHADER_PATH                                              \
-  "/Users/intro/Spaces/TestSpace/ICVp_test/test/focus/shader/"                 \
-  "fragment_pure_color.fs"
+#define VS_SHADER_PATH "./test/focus/shader/vertex.vs"
+#define FS_SHADER_PATH "./test/focus/shader/fragment.fs"
+#define FS_PURE_COLOR_SHADER_PATH "./test/focus/shader/fragment_pure_color.fs"
 
 static std::vector<float> GetQuadVertices();
 static void ProcessKeyInput(GLFWwindow *window);
