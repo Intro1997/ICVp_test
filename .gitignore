@@ -1,5 +1,4 @@
-build
-glad.c
+*build
 .idea
 .vscode
 compile.sh
