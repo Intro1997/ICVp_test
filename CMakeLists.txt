@@ -9,10 +9,6 @@ file(GLOB LOCAL_SOURCE_DIR public/**/*.cpp test/**/*.cpp)
 
 list(APPEND THIRD_INCLUDE_DIR ./include/third_party)
 
-
-message(STATUS "LOCAL_INCLUDE_DIR = ${LOCAL_INCLUDE_DIR}")
-
-
 include(FetchContent)
 
 Set(FETCHCONTENT_QUIET FALSE)
@@ -62,6 +58,16 @@ add_executable(ICVP_TEST
   glad.c
   ${LOCAL_SOURCE_DIR}
 )
+
+set(RUNTIME_FOLDER 
+  asset 
+  test/focus/shader
+)
+foreach( folder ${RUNTIME_FOLDER})
+  add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_SOURCE_DIR}/${folder} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${folder})
+endforeach()
 
 target_include_directories(ICVP_TEST PUBLIC 
   ${LOCAL_INCLUDE_DIR}
