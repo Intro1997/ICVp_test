@@ -14,7 +14,10 @@
 #include "icv_program.hpp"
 #include "icv_shader.hpp"
 #include "icv_texture.hpp"
+#include "icv_time.hpp"
 #include "icv_vertex.hpp"
+
+#define FPS_INTERVAL_MICROSECOND_TIME 16667
 
 #define MARBLE_JPG_PATH "./asset/marble.jpg"
 #define METAL_PNG_PATH "./asset/metal.png"
@@ -63,10 +66,10 @@ void RunFocusTest(GLFWwindow *window) {
   glEnable(GL_DEPTH_TEST);
 
   CHECK_GL_ERROR_WITH_RET(void(0));
+  uint64_t current_time = 0, last_time = 0;
 
   while (!glfwWindowShouldClose(window)) {
-    using namespace std::chrono_literals;
-    std::this_thread::sleep_for(16ms);
+    current_time = GetCurrentTime(TimeUnit::MICORSECOND);
     ProcessKeyInput(window);
     ProcessBasicMove(window, curr_camera, 0.1f);
     ProcessBasicWatch(window, curr_camera, 0.1f);
@@ -79,6 +82,9 @@ void RunFocusTest(GLFWwindow *window) {
 
     glfwPollEvents();
     glfwSwapBuffers(window);
+    last_time = GetCurrentTime(TimeUnit::MICORSECOND);
+    WAIT_UNTIL_INTERVAL_LARGE_THAN_FPS_TIME(current_time, last_time,
+                                            FPS_INTERVAL_MICROSECOND_TIME);
   }
 }
 
