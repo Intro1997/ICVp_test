@@ -65,7 +65,7 @@ void RunFocusTest(GLFWwindow *window) {
 
   CHECK_GL_ERROR_WITH_RET(void(0));
   uint64_t current_time = 0, last_time = 0;
-
+  double cursor_x, cursor_y;
   while (!glfwWindowShouldClose(window)) {
     current_time = GetCurrentTime(TimeUnit::MICORSECOND);
     ProcessKeyInput(window);
@@ -78,7 +78,15 @@ void RunFocusTest(GLFWwindow *window) {
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
+    if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+      glfwGetCursorPos(window, &cursor_x, &cursor_y);
+      std::cout << "before poll cursor pos (" << cursor_x << ", " << cursor_y << ")\n";
+    }
     glfwPollEvents();
+    if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+      glfwGetCursorPos(window, &cursor_x, &cursor_y);
+      std::cout << "after poll cursor pos (" << cursor_x << ", " << cursor_y << ")\n";
+    }
     glfwSwapBuffers(window);
     last_time = GetCurrentTime(TimeUnit::MICORSECOND);
     WAIT_UNTIL_INTERVAL_LARGE_THAN_FPS_TIME(current_time, last_time,
