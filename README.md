@@ -25,7 +25,7 @@ then cmake will download and config glm and glfw repo.
 # Usage
 
 1. press WASD keys to walk forward/backward/left/right
-2. move mouse to change camera toward
+2. press left-ctrl key, then you can move mouse to change camera toward
 
 # known compile issue
 
