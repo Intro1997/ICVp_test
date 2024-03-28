@@ -36,7 +36,6 @@ void RunFocusTest(GLFWwindow *window) {
 
   GLuint quad_vao = CreateVAO(GetQuadVertices());
   GLuint marble_texture = CreateTextureObj(MARBLE_JPG_PATH);
-  GLuint metal_texture = CreateTextureObj(METAL_PNG_PATH);
   Shader vs_shader = CreateShader(GL_VERTEX_SHADER, VS_SHADER_PATH);
   Shader fs_shader = CreateShader(GL_FRAGMENT_SHADER, FS_SHADER_PATH);
   Shader fs_pure_shader =
@@ -49,8 +48,7 @@ void RunFocusTest(GLFWwindow *window) {
       CreateCamera(camera_pos, camera_up, camera_lookat, width, height);
   Program quad_tex_program = CreateProgram({vs_shader, fs_shader});
 
-  if (quad_vao == 0 || marble_texture == 0 || metal_texture == 0 ||
-      !quad_tex_program.Link()) {
+  if (quad_vao == 0 || marble_texture == 0 || !quad_tex_program.Link()) {
     std::cerr << "gl error!\n";
     return;
   }

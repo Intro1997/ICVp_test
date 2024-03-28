@@ -2,6 +2,7 @@
 #include "tools.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <memory>
 
 #define PROGRAM_COMPILE_ERROR_BUFFER_LEN 1024
 
@@ -45,7 +46,7 @@ bool Program::Link() {
     std::unique_ptr<char> buf(new char[PROGRAM_COMPILE_ERROR_BUFFER_LEN]());
     GLint info_len;
     glGetProgramInfoLog(gl_obj_, 1024, &info_len, buf.get());
-    std::cerr << "Link program failed.\nErrMsg: " << buf << std::endl;
+    std::cerr << "Link program failed.\nErrMsg: " << buf.get() << std::endl;
     return false;
   }
 

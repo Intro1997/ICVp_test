@@ -49,7 +49,7 @@ bool Shader::Compile() {
     glGetShaderInfoLog(gl_obj_, SHADER_COMPILE_ERROR_BUFFER_LEN, &info_len,
                        buf.get());
     std::cerr << "Compile " << file_.current_path()
-              << " failed.\nErrMsg: " << buf << std::endl;
+              << " failed.\nErrMsg: " << buf.get() << std::endl;
     return false;
   }
 

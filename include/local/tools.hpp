@@ -1,4 +1,5 @@
 #pragma once
+#include <cstring>
 #include <iostream>
 #include <string>
 
@@ -22,7 +23,7 @@
     GLenum err = glGetError();                                                 \
     if (err != GL_NO_ERROR) {                                                  \
       std::cerr << "GL error occurs! Error code is " << err << ", at "         \
-                << std::string(__FILE_NAME__) << ":" << __LINE__ << "\n";                   \
+                << std::string(__FILE_NAME__) << ":" << __LINE__ << "\n";      \
       return ret_value;                                                        \
     }                                                                          \
   } while (false);

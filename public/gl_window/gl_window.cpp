@@ -8,8 +8,11 @@
 #include <iostream>
 
 static glm::vec3 GetVec3ByYawPitch(double yaw, double pitch);
+static void GlfwErrorCallback(int error_code, const char *description);
 
 GLFWwindow *GetGlWindow(const int width, const int height, const char *title) {
+  glfwSetErrorCallback(GlfwErrorCallback);
+
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -126,4 +129,8 @@ static glm::vec3 GetVec3ByYawPitch(double yaw_degree, double pitch_degree) {
   // 180));
   double z = glm::cos(pitch_radians) * glm::sin(yaw_radians);
   return glm::normalize(glm::vec3(x, y, z));
+}
+
+static void GlfwErrorCallback(int error_code, const char *description) {
+  std::cerr << "GLFW ERROR: " << error_code << ", Msg: " << description << "\n";
 }
