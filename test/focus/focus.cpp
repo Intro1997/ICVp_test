@@ -11,11 +11,10 @@
 #include <vector>
 
 #include "gl_window.hpp"
+#include "icv_model.hpp"
 #include "icv_program.hpp"
 #include "icv_shader.hpp"
-#include "icv_texture.hpp"
 #include "icv_time.hpp"
-#include "icv_vertex.hpp"
 
 #define FPS_INTERVAL_MICROSECOND_TIME 16667
 
@@ -34,8 +33,7 @@ void RunFocusTest(GLFWwindow *window) {
   int width = 0, height = 0;
   GetWindowSize(window, &width, &height);
 
-  GLuint quad_vao = CreateVAO(GetQuadVertices());
-  GLuint marble_texture = CreateTextureObj(MARBLE_JPG_PATH);
+  Model quad_model = CreateModel(GetQuadVertices(), MARBLE_JPG_PATH);
   Shader vs_shader = CreateShader(GL_VERTEX_SHADER, VS_SHADER_PATH);
   Shader fs_shader = CreateShader(GL_FRAGMENT_SHADER, FS_SHADER_PATH);
   Shader fs_pure_shader =
@@ -48,14 +46,15 @@ void RunFocusTest(GLFWwindow *window) {
       CreateCamera(camera_pos, camera_up, camera_lookat, width, height);
   Program quad_tex_program = CreateProgram({vs_shader, fs_shader});
 
-  if (quad_vao == 0 || marble_texture == 0 || !quad_tex_program.Link()) {
+  if (quad_model.vao_id() == 0 || quad_model.material().texture_id() == 0 ||
+      !quad_tex_program.Link()) {
     std::cerr << "gl error!\n";
     return;
   }
 
-  glBindVertexArray(quad_vao);
+  glBindVertexArray(quad_model.vao_id());
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, marble_texture);
+  glBindTexture(GL_TEXTURE_2D, quad_model.material().texture_id());
 
   quad_tex_program.Use();
   quad_tex_program.UseCamera(curr_camera);
@@ -78,15 +77,8 @@ void RunFocusTest(GLFWwindow *window) {
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
-      glfwGetCursorPos(window, &cursor_x, &cursor_y);
-      std::cout << "before poll cursor pos (" << cursor_x << ", " << cursor_y << ")\n";
-    }
     glfwPollEvents();
-    if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
-      glfwGetCursorPos(window, &cursor_x, &cursor_y);
-      std::cout << "after poll cursor pos (" << cursor_x << ", " << cursor_y << ")\n";
-    }
+
     glfwSwapBuffers(window);
     last_time = GetCurrentTime(TimeUnit::MICORSECOND);
     WAIT_UNTIL_INTERVAL_LARGE_THAN_FPS_TIME(current_time, last_time,
