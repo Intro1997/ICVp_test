@@ -7,6 +7,10 @@ const std::weak_ptr<Camera> &RayCaster::camera_ref() const {
   return camera_ref_;
 }
 
+std::vector<std::weak_ptr<Model>> RayCaster::model_ref_vec() {
+  return model_ref_vec_;
+}
+
 void RayCaster::AddModelRef(const std::shared_ptr<Model> &model) {
   model_ref_vec_.push_back(model);
 }
@@ -25,5 +29,5 @@ std::vector<std::weak_ptr<Model>>
 ProcessRayCaster(GLFWwindow *window, RayCaster &ray_caster,
                  const glm::vec2 &cursor_pos) {
 
-  return {};
+  return ray_caster.model_ref_vec();
 }

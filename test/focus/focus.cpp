@@ -30,6 +30,7 @@ static std::vector<float> GetQuadVertices();
 static void ProcessKeyInput(GLFWwindow *window);
 static void MouseButtonCallback(GLFWwindow *window, int button, int action,
                                 int mods);
+static std::vector<std::shared_ptr<Model>> all_models;
 
 static RayCaster ray_caster;
 static std::vector<bool> model_is_selected_table;
@@ -39,12 +40,14 @@ void RunFocusTest(GLFWwindow *window) {
   int width = 0, height = 0;
   GetWindowSize(window, &width, &height);
 
-  std::shared_ptr<Model> quad_model0 =
-      std::make_shared<Model>(CreateModel(GetQuadVertices(), MARBLE_JPG_PATH));
-  // std::shared_ptr<Model> quad_model1 =
-  // std::make_shared<Model>(CreateModel(GetQuadVertices(), MARBLE_JPG_PATH));
-  // std::shared_ptr<Model> quad_model2 =
-  // std::make_shared<Model>(CreateModel(GetQuadVertices(), MARBLE_JPG_PATH));
+  all_models.push_back(
+      std::make_shared<Model>(CreateModel(GetQuadVertices(), MARBLE_JPG_PATH)));
+  all_models.push_back(std::make_shared<Model>(
+      CreateModel(GetQuadVertices(), MARBLE_JPG_PATH,
+                  glm::translate(glm::mat4(1.0), glm::vec3(1.5, 0.0, 0.0)))));
+  all_models.push_back(std::make_shared<Model>(
+      CreateModel(GetQuadVertices(), MARBLE_JPG_PATH,
+                  glm::translate(glm::mat4(1.0), glm::vec3(0.0, 1.5, 0.0)))));
 
   model_is_selected_table.resize(QueryTotalModelCount(), false);
 
@@ -60,15 +63,21 @@ void RunFocusTest(GLFWwindow *window) {
   std::shared_ptr<Camera> curr_camera = std::make_shared<Camera>(
       CreateCamera(camera_pos, camera_up, camera_lookat, width, height));
 
-  ray_caster = CreateRayCaster(curr_camera, {quad_model0});
+  ray_caster = CreateRayCaster(curr_camera, all_models);
 
   Program quad_tex_program = CreateProgram({vs_shader, fs_shader});
 
   Program select_program = CreateProgram({vs_pure_shader, fs_pure_shader});
 
-  if (quad_model0->vao_id() == 0 || quad_model0->material().texture_id() == 0 ||
-      !quad_tex_program.Link() || !select_program.Link()) {
-    std::cerr << "gl error!\n";
+  for (const auto &model : all_models) {
+    if (model->vao_id() == 0 || model->material().texture_id() == 0) {
+      std::cerr << "gl mmodel error!\n";
+      return;
+    }
+  }
+
+  if (!quad_tex_program.Link() || !select_program.Link()) {
+    std::cerr << "gl program error!\n";
     return;
   }
 
@@ -89,7 +98,7 @@ void RunFocusTest(GLFWwindow *window) {
   select_program.Use();
   select_program.UseCamera(*curr_camera);
   select_program.SetUniformMatrix4(
-      "model", glm::scale(glm::mat4(1.0), glm::vec3(1.5, 1.5, 1.5)));
+      "model", glm::scale(glm::mat4(1.0), glm::vec3(1.2, 1.2, 1.2)));
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_STENCIL_TEST);
@@ -108,26 +117,28 @@ void RunFocusTest(GLFWwindow *window) {
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    glBindVertexArray(quad_model0->vao_id());
-
-    // normal render
-    {
+    for (const auto &model : all_models) {
+      glBindVertexArray(model->vao_id());
       quad_tex_program.Use();
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, quad_model0->material().texture_id());
+      glBindTexture(GL_TEXTURE_2D, model->material().texture_id());
+
+      quad_tex_program.SetUniformMatrix4("model", model->trans_mat());
 
       glStencilMask(0xFF);
       glStencilFunc(GL_ALWAYS, 1, 0xFF);
       glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
 
-    // select render
-    {
-      select_program.Use();
-      glStencilMask(0xFF);
-      glStencilFunc(GL_EQUAL, 0, 0xFF);
-      glBindTexture(GL_TEXTURE_2D, 0);
-      glDrawArrays(GL_TRIANGLES, 0, 36);
+      if (model_is_selected_table[model->model_id()]) {
+        select_program.Use();
+        select_program.SetUniformMatrix4(
+            "model",
+            model->trans_mat() * glm::scale(glm::mat4(1.0), glm::vec3(1.2)));
+        glStencilMask(0xFF);
+        glStencilFunc(GL_EQUAL, 0, 0xFF);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+      }
     }
 
     glfwPollEvents();
@@ -160,6 +171,7 @@ static void MouseButtonCallback(GLFWwindow *window, int button, int action,
     glfwGetCursorPos(window, &cursor_pos.x, &cursor_pos.y);
     std::vector<std::weak_ptr<Model>> selected_models =
         ProcessRayCaster(window, ray_caster, cursor_pos);
+
     for (const auto &selected_model : selected_models) {
       if (!selected_model.expired()) {
         std::shared_ptr<Model> selected_model_ref = selected_model.lock();

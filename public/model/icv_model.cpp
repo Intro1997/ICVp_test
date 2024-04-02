@@ -25,13 +25,16 @@ bool Model::LoadVaoId() {
 
 static uint32_t total_model_cnt = 0;
 Model CreateModel(const std::vector<float> &positions,
-                  const std::string &texture_image_path) {
+                  const std::string &texture_image_path,
+                  const glm::mat4 trans_mat) {
   Material material(MaterialType::TEXTURE_2D, texture_image_path);
   if (!material.LoadTextureId()) {
     std::cerr << "Load \"" << texture_image_path << "\" failed.\n";
   }
 
   Model model(positions, material, total_model_cnt++);
+  model.set_trans_mat(trans_mat);
+
   if (!model.LoadVaoId()) {
     std::cerr << "Load model position failed.\n";
   }
@@ -40,5 +43,9 @@ Model CreateModel(const std::vector<float> &positions,
 }
 
 uint32_t Model::model_id() const { return model_id_; }
+
+void Model::set_trans_mat(const glm::mat4 trans_mat) { trans_mat_ = trans_mat; }
+
+glm::mat4 Model::trans_mat() const { return trans_mat_; }
 
 uint32_t QueryTotalModelCount() { return total_model_cnt; }

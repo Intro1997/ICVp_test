@@ -12,6 +12,8 @@ public:
   const std::weak_ptr<Camera> &camera_ref() const;
 
   void AddModelRef(const std::shared_ptr<Model> &model);
+  
+  std::vector<std::weak_ptr<Model>> model_ref_vec();
 
 private:
   std::weak_ptr<Camera> camera_ref_;
