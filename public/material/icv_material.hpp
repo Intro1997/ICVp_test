@@ -15,7 +15,7 @@ public:
   void set_texture_id(const GLuint id);
   GLuint texture_id() const;
 
-  std::string texture_image_path() const;
+  std::string texture_image_path() const;  
 
   bool LoadTextureId();
 

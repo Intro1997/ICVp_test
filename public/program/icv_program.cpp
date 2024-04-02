@@ -57,10 +57,6 @@ bool Program::Link() {
 
 void Program::Use() const {
   glUseProgram(gl_obj_);
-  // remove these
-  SetUniformMatrix4("model", glm::mat4(1.0));
-  SetUniformMatrix4("view", glm::mat4(1.0));
-  SetUniformMatrix4("projection", glm::mat4(1.0));
 }
 
 // TODO: use function generator
