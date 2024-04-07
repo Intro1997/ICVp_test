@@ -48,4 +48,16 @@ void Model::set_trans_mat(const glm::mat4 trans_mat) { trans_mat_ = trans_mat; }
 
 glm::mat4 Model::trans_mat() const { return trans_mat_; }
 
+glm::vec3 Model::GetPointPositionByIdx(const uint32_t idx) {
+  glm::vec3 point_position = glm::vec3(0.0, 0.0, 0.0);
+  if (positions_.size() <= idx) {
+    return point_position;
+  }
+  const uint32_t offset = 5 * idx;
+  point_position.x = positions_[offset];
+  point_position.y = positions_[offset + 1];
+  point_position.z = positions_[offset + 2];
+  return point_position;
+}
+
 uint32_t QueryTotalModelCount() { return total_model_cnt; }

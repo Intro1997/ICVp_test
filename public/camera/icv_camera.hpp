@@ -17,7 +17,9 @@ public:
   void set_lookat(const glm::vec3 &lookat);
   const glm::vec3 &lookat() const;
   const glm::mat4 &view_mat() const;
+  const glm::mat4 &inverse_view_mat() const;
   const glm::mat4 &projection_mat() const;
+  const glm::mat4 &inverse_projection_mat() const;
 
   void set_horizontal_fov(const float &horizontal_fov);
   float horizontal_fov() const;
@@ -43,7 +45,9 @@ private:
   glm::vec3 up_;
   glm::vec3 lookat_;
   glm::mat4 view_mat_;
+  glm::mat4 inverse_view_mat_;
   glm::mat4 projection_mat_;
+  glm::mat4 inverse_projection_mat_; // used in ray caster
   float horizontal_fov_;
   float clip_plane_near_;
   float clip_plane_far_;

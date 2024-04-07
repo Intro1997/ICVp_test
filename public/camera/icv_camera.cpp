@@ -8,7 +8,8 @@ static const glm::mat4 kGlmIdentityMat4 = glm::mat4(1.0);
 Camera::Camera()
     : position_(glm::vec3(0.0, 0.0, 0.0)), up_(glm::vec3(0.0, 1.0, 0.0)),
       lookat_(glm::vec3(0.0, 0.0, -1.0)), view_mat_(glm::mat4(1.0)),
-      projection_mat_(glm::mat4(1.0)), horizontal_fov_(45.0f),
+      inverse_view_mat_(glm::mat4(1.0)), projection_mat_(glm::mat4(1.0)),
+      inverse_projection_mat_(glm::mat4(1.0)), horizontal_fov_(45.0f),
       clip_plane_near_(0.1f), clip_plane_far_(10.0f), aspect_(1.0f),
       orthographic_width_(0.0f), lookat_style_(LookAtStyle::kDefault) {}
 
@@ -26,7 +27,13 @@ const glm::vec3 &Camera::lookat() const { return lookat_; }
 
 const glm::mat4 &Camera::view_mat() const { return view_mat_; }
 
+const glm::mat4 &Camera::inverse_view_mat() const { return inverse_view_mat_; }
+
 const glm::mat4 &Camera::projection_mat() const { return projection_mat_; }
+
+const glm::mat4 &Camera::inverse_projection_mat() const {
+  return inverse_projection_mat_;
+}
 
 void Camera::set_horizontal_fov(const float &horizontal_fov) {
   horizontal_fov_ = horizontal_fov;
@@ -66,6 +73,7 @@ void Camera::GenViewMat() {
   } else {
     view_mat_ = glm::lookAt(position_, lookat_, up_);
   }
+  inverse_view_mat_ = glm::inverse(view_mat_);
 }
 
 void Camera::Update() {
@@ -96,6 +104,7 @@ void Camera::GenProjectionMat() {
     projection_mat_ =
         glm::ortho(-right, right, up, -up, clip_plane_near_, clip_plane_far_);
   }
+  inverse_projection_mat_ = glm::inverse(projection_mat_);
 }
 
 Camera CreateCamera(const glm::vec3 &pos, const glm::vec3 &up,

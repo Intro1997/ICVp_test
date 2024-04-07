@@ -42,12 +42,12 @@ void RunFocusTest(GLFWwindow *window) {
 
   all_models.push_back(
       std::make_shared<Model>(CreateModel(GetQuadVertices(), MARBLE_JPG_PATH)));
-  all_models.push_back(std::make_shared<Model>(
-      CreateModel(GetQuadVertices(), MARBLE_JPG_PATH,
-                  glm::translate(glm::mat4(1.0), glm::vec3(1.5, 0.0, 0.0)))));
-  all_models.push_back(std::make_shared<Model>(
-      CreateModel(GetQuadVertices(), MARBLE_JPG_PATH,
-                  glm::translate(glm::mat4(1.0), glm::vec3(0.0, 1.5, 0.0)))));
+  // all_models.push_back(std::make_shared<Model>(
+  //     CreateModel(GetQuadVertices(), MARBLE_JPG_PATH,
+  //                 glm::translate(glm::mat4(1.0), glm::vec3(1.5, 0.0, 0.0)))));
+  // all_models.push_back(std::make_shared<Model>(
+  //     CreateModel(GetQuadVertices(), MARBLE_JPG_PATH,
+  //                 glm::translate(glm::mat4(1.0), glm::vec3(0.0, 1.5, 0.0)))));
 
   model_is_selected_table.resize(QueryTotalModelCount(), false);
 
@@ -186,42 +186,48 @@ static std::vector<float> GetQuadVertices() {
   // clang-format off
   return {
         // positions          // texture Coords
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        // back
+  /*0*/ -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        // front
+ /*6*/  -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
         -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        // left
+/*12*/  -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         // right
+/*18*/   0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
          0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
          0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
          0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        // bottom
+/*24*/  -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
          0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        // top
+/*30*/  -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,

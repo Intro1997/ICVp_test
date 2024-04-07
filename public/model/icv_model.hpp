@@ -23,6 +23,8 @@ public:
   void set_trans_mat(const glm::mat4 trans_mat);
   glm::mat4 trans_mat() const;
 
+  glm::vec3 GetPointPositionByIdx(const uint32_t idx);
+
 private:
   std::vector<float> positions_;
   GLuint vao_id_;
